@@ -15,13 +15,13 @@ function grabFile(fileUrl) {
         electron.ipcMain.on("util-ready", () => {
             grabberWindow.webContents.send("xhrGet", fileUrl);
             electron.ipcMain.once("xhrGet-return", (event, data) => {
-                resolve(data);
+                resolve({ data, window: grabberWindow });
             });
         });
 
         setTimeout(() => grabberWindow.loadURL("https://nerdcubed.co.uk/404"), 500);
     });
-    return { promise, window: grabberWindow };
+    return promise;
 }
 
 module.exports = { grabFile };
