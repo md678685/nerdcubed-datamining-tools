@@ -1,10 +1,6 @@
 const ipcRenderer = require("electron").ipcRenderer;
 let $;
 
-process.on("loaded", () => {
-    console.log("hi");
-});
-
 window.onload = () => {
     $ = window.$ = window.jQuery = require("jquery");
     ipcRenderer.send("util-ready");
