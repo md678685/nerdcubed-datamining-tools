@@ -4,8 +4,20 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "child-process-promise": "^2.2.1",
+    "colors": "^1.1.2",
+    "electron": "1.6.6",
     "electron-log": "^2.2.3",
+    "fs-promise": "^2.0.2",
     "jquery": "^3.2.1",
     "tmp": "^0.0.31"
+  },
+  "scripts": {
+    "rebuild": "electron-rebuild",
+    "repl": "electron --interactive",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.5.7"
   }
 }
