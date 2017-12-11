@@ -14,12 +14,12 @@ const execOpts = { cwd: dataDir, maxBuffer: 5 * 1024 * 1024 };
 const feedUrl = "https://www.nerdcubed.co.uk/feed.json";
 const liveUrl = "https://nerdcubed-live.herokuapp.com/live.json";
 
-const debounceLimit = 10;
+const debounceLimit = 25;
 let debounce = 0;
 
 async function saveVideoData(video, index) {
     while (debounce >= debounceLimit) {
-        await setTimeoutPromise(500 * Math.floor(index / 8));
+        await setTimeoutPromise(500 * Math.floor(index / debounceLimit) - index);
     }
     debounce++;
     let log = (msg) => console.log(`${video.youtube_id}: ${msg}`);
