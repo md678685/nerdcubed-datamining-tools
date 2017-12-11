@@ -34,7 +34,7 @@ async function saveVideoData(video, index) {
         websiteData: {
             path: video.path,
             small: video.small,
-            tages: video.tags
+            tags: video.tags
         }
     };
 
