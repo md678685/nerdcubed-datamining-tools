@@ -24,4 +24,10 @@ function grabFile(fileUrl) {
     return promise;
 }
 
-module.exports = { grabFile };
+function setTimeoutPromise(delay) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, delay);
+    })
+}
+
+module.exports = { grabFile, setTimeoutPromise };

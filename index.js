@@ -6,7 +6,7 @@ const log = require("electron-log");
 
 require("colors");
 
-const grabFile = require("./util").grabFile;
+const { grabFile, setTimeoutPromise } = require("./util");
 
 const dataDir = path.resolve(__dirname, "data/");
 const execOpts = { cwd: dataDir, maxBuffer: 5 * 1024 * 1024 };
@@ -14,7 +14,14 @@ const execOpts = { cwd: dataDir, maxBuffer: 5 * 1024 * 1024 };
 const feedUrl = "https://www.nerdcubed.co.uk/feed.json";
 const liveUrl = "https://nerdcubed-live.herokuapp.com/live.json";
 
-async function saveVideoData(video) {
+const debounceLimit = 10;
+let debounce = 0;
+
+async function saveVideoData(video, index) {
+    while (debounce >= debounceLimit) {
+        await setTimeoutPromise(500 * Math.floor(index / 8));
+    }
+    debounce++;
     let log = (msg) => console.log(`${video.youtube_id}: ${msg}`);
     let videoDir = path.resolve(dataDir, video.youtube_id + "/");
     let videoJson = path.resolve(videoDir, "video.json");
@@ -44,6 +51,7 @@ async function saveVideoData(video) {
 
     let returnValue = await fs.writeFile(videoJson, JSON.stringify(newVideo, null, 4));
     log("Video processed.".green);
+    debounce--;
     return returnValue;
 }
 
