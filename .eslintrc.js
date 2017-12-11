@@ -5,7 +5,8 @@ module.exports = {
   },
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "rules": {
     "no-await-in-loop": "warn",
@@ -146,6 +147,6 @@ module.exports = {
     "template-curly-spacing": "error",
     "yield-star-spacing": "error",
 
-    "no-console": ["error", { allow: ["warn", "error"] }],
+    "no-console": ["error", { allow: ["log", "warn", "error"] }],
   }
 }
