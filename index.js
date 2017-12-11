@@ -1,33 +1,33 @@
 const electron = require("electron");
 const exec = require("child-process-promise").exec;
-const fs = require("fs-promise");
+const fs = require("fs-extra");
 const path = require("path");
-const log = require("electron-log");
 
 require("colors");
 
-const { grabFile, setTimeoutPromise } = require("./util");
+const { grabFile, padLeft, setTimeoutPromise } = require("./util");
 
 const dataDir = path.resolve(__dirname, "data/");
 const execOpts = { cwd: dataDir, maxBuffer: 5 * 1024 * 1024 };
 
 const feedUrl = "https://www.nerdcubed.co.uk/feed.json";
-const liveUrl = "https://nerdcubed-live.herokuapp.com/live.json";
+const liveUrl = "https://nerdcubed-live.herokuapp.com/live.json"; // eslint-disable-line no-unused-vars
 
 const debounceLimit = 25;
 let debounce = 0;
 
 async function saveVideoData(video, index) {
     while (debounce >= debounceLimit) {
-        await setTimeoutPromise(500 * Math.floor(index / debounceLimit) - index);
+        // eslint-disable-next-line no-await-in-loop
+        await setTimeoutPromise((500 * Math.floor(index / debounceLimit)) - index);
     }
-    debounce++;
-    let log = (msg) => console.log(`${video.youtube_id}: ${msg}`);
-    let dateObj = new Date(video.date);
-    let monthDir = path.resolve(dataDir, `${dateObj.getUTCFullYear()}-${String("0" + (dateObj.getUTCMonth() + 1)).slice(-2)}`);
-    let videoDir = path.resolve(monthDir, video.youtube_id + "/");
-    let videoJson = path.resolve(videoDir, "video.json");
-    let newVideo = {
+    debounce += 1;
+    const log = msg => console.log(`${video.youtube_id}: ${msg}`);
+    const dateObj = new Date(video.date);
+    const monthDir = path.resolve(dataDir, `${dateObj.getUTCFullYear()}-${padLeft(dateObj.getUTCMonth() + 1)}`);
+    const videoDir = path.resolve(monthDir, video.youtube_id);
+    const videoJson = path.resolve(videoDir, "video.json");
+    const newVideo = {
         title: video.title,
         date: video.date,
         links: video.links,
@@ -36,19 +36,19 @@ async function saveVideoData(video, index) {
         websiteData: {
             path: video.path,
             small: video.small,
-            tags: video.tags
-        }
+            tags: video.tags,
+        },
     };
 
     log(`Processing video "${video.title}"`.white);
-    
+
     if (!(await fs.exists(monthDir))) {
         log("Creating month directory...".yellow);
         try {
             await fs.mkdir(monthDir);
         } catch (e) {
-            log("Month directory already exists...".red);
-        }    
+            log("Month directory already exists; continuing".red);
+        }
     }
 
     if (!(await fs.exists(videoDir))) {
@@ -61,9 +61,9 @@ async function saveVideoData(video, index) {
         newVideo = Object.assign(await fs.readJson(videoJson), newVideo);
     }
 
-    let returnValue = await fs.writeFile(videoJson, JSON.stringify(newVideo, null, 4));
+    const returnValue = await fs.writeFile(videoJson, JSON.stringify(newVideo, null, 4));
     log("Video processed.".green);
-    debounce--;
+    debounce -= 1;
     return returnValue;
 }
 
@@ -79,7 +79,7 @@ async function ready() {
         await fs.writeFile(path.resolve(dataDir, "feed.json"), JSON.stringify(feedGrabber.data, null, 4));
 
         await parseVideos(feedGrabber.data);
-        
+
         console.log("Staging changes...".cyan);
         let addResult = await exec("git add .", execOpts);
         //console.log("git add: ", JSON.stringify(addResult));

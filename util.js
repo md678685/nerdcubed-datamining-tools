@@ -1,15 +1,13 @@
 const electron = require("electron");
-const fs = require("fs");
 const path = require("path");
-const tmp = require("tmp");
 
 function grabFile(fileUrl) {
-    let visible = ( process.env.SHOW_UTIL ? true : false );
-    let grabberWindow = new electron.BrowserWindow({
+    const visible = !!process.env.SHOW_UTIL;
+    const grabberWindow = new electron.BrowserWindow({
         webPreferences: { preload: path.join(__dirname, "utilPreload.js") },
-        show: visible
+        show: visible,
     });
-    let promise = new Promise((resolve, reject) => {
+    const promise = new Promise((resolve) => {
         grabberWindow.webContents.openDevTools();
 
         electron.ipcMain.on("util-ready", () => {
@@ -24,10 +22,18 @@ function grabFile(fileUrl) {
     return promise;
 }
 
+function padLeft(input, padding, amount) {
+    return `${padding.repeat(amount)}${input}`.splice(-amount);
+}
+
 function setTimeoutPromise(delay) {
     return new Promise((resolve) => {
         setTimeout(resolve, delay);
-    })
+    });
 }
 
-module.exports = { grabFile, setTimeoutPromise };
+module.exports = {
+    grabFile,
+    padLeft,
+    setTimeoutPromise,
+};
