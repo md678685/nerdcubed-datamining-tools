@@ -80,12 +80,15 @@ async function ready() {
 
         await parseVideos(feedGrabber.data);
         
+        console.log("Staging changes...".cyan);
         let addResult = await exec("git add .", execOpts);
         //console.log("git add: ", JSON.stringify(addResult));
 
+        console.log("Committing changes...".cyan);
         let commitResult = await exec(`git commit -m "Updated feed at ${(new Date()).toUTCString()}"`, execOpts);
         //console.log("git commit: ", JSON.stringify(commitResult));
 
+        console.log("Pushing changes...".cyan);
         let pushResult = await exec("git push origin master", execOpts);
         //console.log("git push: ", JSON.stringify(pushResult));
         console.log("Done!".magenta);
