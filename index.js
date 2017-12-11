@@ -23,7 +23,9 @@ async function saveVideoData(video, index) {
     }
     debounce++;
     let log = (msg) => console.log(`${video.youtube_id}: ${msg}`);
-    let videoDir = path.resolve(dataDir, video.youtube_id + "/");
+    let dateObj = new Date(video.date);
+    let monthDir = path.resolve(dataDir, `${dateObj.getUTCFullYear()}-${dateObj.getUTCMonth()}`);
+    let videoDir = path.resolve(monthDir, video.youtube_id + "/");
     let videoJson = path.resolve(videoDir, "video.json");
     let newVideo = {
         title: video.title,
@@ -39,11 +41,21 @@ async function saveVideoData(video, index) {
     };
 
     log(`Processing video "${video.title}"`.white);
+    
+    if (!(await fs.exists(monthDir))) {
+        log("Creating month directory...".yellow);
+        try {
+            await fs.mkdir(monthDir);
+        } catch (e) {
+            log("Month directory already exists...".red);
+        }    
+    }
 
     if (!(await fs.exists(videoDir))) {
         log("Creating video directory...".yellow);
         await fs.mkdir(videoDir);
     }
+
     if (await fs.exists(videoJson)) {
         log("Merging existing data with new data...".yellow);
         newVideo = Object.assign(await fs.readJson(videoJson), newVideo);
