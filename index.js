@@ -42,19 +42,7 @@ async function saveVideoData(video, index) {
 
     log(`Processing video "${video.title}"`.white);
 
-    if (!(await fs.exists(monthDir))) {
-        log("Creating month directory...".yellow);
-        try {
-            await fs.mkdir(monthDir);
-        } catch (e) {
-            log("Month directory already exists; continuing".red);
-        }
-    }
-
-    if (!(await fs.exists(videoDir))) {
-        log("Creating video directory...".yellow);
-        await fs.mkdir(videoDir);
-    }
+    await fs.ensureDir(videoDir);
 
     if (await fs.exists(videoJson)) {
         log("Merging existing data with new data...".yellow);
