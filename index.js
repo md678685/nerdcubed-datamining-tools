@@ -24,7 +24,7 @@ async function saveVideoData(video, index) {
     debounce++;
     let log = (msg) => console.log(`${video.youtube_id}: ${msg}`);
     let dateObj = new Date(video.date);
-    let monthDir = path.resolve(dataDir, `${dateObj.getUTCFullYear()}-${dateObj.getUTCMonth()}`);
+    let monthDir = path.resolve(dataDir, `${dateObj.getUTCFullYear()}-${String("0" + (dateObj.getUTCMonth() + 1)).slice(-2)}`);
     let videoDir = path.resolve(monthDir, video.youtube_id + "/");
     let videoJson = path.resolve(videoDir, "video.json");
     let newVideo = {
