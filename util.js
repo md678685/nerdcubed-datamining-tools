@@ -23,7 +23,7 @@ function grabFile(fileUrl) {
 }
 
 function padLeft(input, padding, amount) {
-    return `${padding.repeat(amount)}${input}`.splice(-amount);
+    return String(`${padding.repeat(amount)}${input}`).splice(-amount);
 }
 
 function setTimeoutPromise(delay) {
